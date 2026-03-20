@@ -5,8 +5,8 @@ import plotly.express as px
 
 st.set_page_config(page_title="Startup Momentum Radar", page_icon="🚀", layout="wide")
 
-st.title("🚀 Startup Momentum Radar")
-st.write("A simple VC-style dashboard that tracks startup momentum signals.")
+st.title("Ai Startup Momentum Radar")
+st.write("A simple VC-style dashboard that tracks ai startup momentum.")
 
 # -----------------------
 # Sample startup data
