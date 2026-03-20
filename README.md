@@ -16,3 +16,5 @@ Tech
 
 Run
 streamlit run app.py
+
+https://startup-momentum-radar-9cqxcm6fjpmywkbo3wxvkd.streamlit.app/
