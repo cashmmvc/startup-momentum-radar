@@ -149,3 +149,74 @@ st.dataframe(
     filtered.sort_values("momentum_score", ascending=False),
     use_container_width=True
 )
+
+st.markdown("""
+<style>
+
+/* Background */
+.stApp {
+    background-color: #05070d;
+}
+
+/* Text */
+html, body, [class*="css"] {
+    font-family: 'Courier New', monospace;
+    color: #00ff9f;
+}
+
+/* Headers */
+h1, h2, h3 {
+    color: #00ff9f;
+    text-shadow: 0 0 10px #00ff9f;
+}
+
+/* Cards / containers */
+[data-testid="stMetric"] {
+    background-color: #0a0f1c;
+    border: 1px solid #00ff9f;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00ff9f33;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #04060a;
+    border-right: 1px solid #00ff9f;
+}
+
+/* Table */
+[data-testid="stDataFrame"] {
+    border: 1px solid #00ff9f;
+}
+
+/* Glow effect */
+.glow {
+    text-shadow: 0 0 8px #00ff9f;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+fig.update_layout(
+    template="plotly_dark",
+    paper_bgcolor="#05070d",
+    plot_bgcolor="#05070d",
+    font=dict(color="#00ff9f"),
+)
+st.markdown("## 🧠 SIGNAL ANALYSIS")
+
+top = filtered.sort_values("momentum_score", ascending=False).iloc[0]
+bottom = filtered.sort_values("momentum_score").iloc[0]
+
+st.markdown(f"""
+> 🚀 TARGET LOCKED: **{top['name']}**  
+High signal across growth + execution vectors.
+
+> ⚠️ WEAK NODE: **{bottom['name']}**  
+Low momentum detected. Potential dead zone.
+
+> 🧬 SYSTEM NOTE:  
+Momentum spikes often precede funding events. Monitor closely.
+""")
+
