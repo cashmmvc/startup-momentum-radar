@@ -3,220 +3,197 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
-st.set_page_config(page_title="Startup Momentum Radar", page_icon="🚀", layout="wide")
-
-st.title("Ai Startup Momentum Radar")
-st.write("A simple VC-style dashboard that tracks ai startup momentum.")
+st.set_page_config(page_title="AI Breakout Terminal", page_icon="💻", layout="wide")
 
 # -----------------------
-# Sample startup data
+# 🔥 HACKER UI STYLE
 # -----------------------
-data = data = [
-    {"name": "Perplexity AI", "sector": "AI Search", "batch": "YC W22", "website_growth": 45, "hiring_growth": 35, "social_growth": 50, "funding_millions": 25},
-    {"name": "Scale AI", "sector": "AI Infrastructure", "batch": "YC S16", "website_growth": 38, "hiring_growth": 40, "social_growth": 42, "funding_millions": 100},
-    {"name": "Runway ML", "sector": "Generative AI", "batch": "YC S18", "website_growth": 50, "hiring_growth": 45, "social_growth": 60, "funding_millions": 75},
-    {"name": "Replit", "sector": "AI DevTools", "batch": "YC W18", "website_growth": 35, "hiring_growth": 30, "social_growth": 33, "funding_millions": 20},
-    {"name": "LangChain", "sector": "AI Infrastructure", "batch": "YC S23", "website_growth": 55, "hiring_growth": 42, "social_growth": 65, "funding_millions": 10},
-    {"name": "Adept AI", "sector": "AI Agents", "batch": "YC Alumni", "website_growth": 48, "hiring_growth": 38, "social_growth": 55, "funding_millions": 65},
-    {"name": "Cognition Labs", "sector": "AI Coding", "batch": "YC S23", "website_growth": 60, "hiring_growth": 50, "social_growth": 70, "funding_millions": 21},
-    {"name": "Pika Labs", "sector": "Generative AI", "batch": "YC W24", "website_growth": 52, "hiring_growth": 36, "social_growth": 58, "funding_millions": 12},
-]
-
-df = pd.DataFrame(data)
-
-def norm(series):
-    return (series - series.min()) / (series.max() - series.min() + 1e-9)
-
-df["momentum_score"] = (
-    norm(df["website_growth"]) * 35 +
-    norm(df["hiring_growth"]) * 30 +
-    norm(df["social_growth"]) * 20 +
-    norm(df["funding_millions"]) * 15
-).round(1)
-
-# -----------------------
-# Fake trend data
-# -----------------------
-months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
-rng = np.random.default_rng(42)
-rows = []
-
-for _, row in df.iterrows():
-    base = float(row["momentum_score"]) - 8
-    slope = rng.uniform(1.5, 4.5)
-    noise = rng.normal(0, 1.5, size=len(months))
-
-    for i, month in enumerate(months):
-        score = max(0, base + slope * i + noise[i])
-        rows.append({
-            "Month": month,
-            "Startup": row["name"],
-            "Sector": row["sector"],
-            "Score": round(score, 1)
-        })
-
-trend_df = pd.DataFrame(rows)
-
-# -----------------------
-# Sidebar filters
-# -----------------------
-st.sidebar.header("Filters")
-sector_choice = st.sidebar.selectbox("Sector", ["All"] + sorted(df["sector"].unique().tolist()))
-min_score = st.sidebar.slider("Minimum momentum score", 0.0, float(df["momentum_score"].max()), 0.0, 1.0)
-
-filtered = df.copy()
-
-if sector_choice != "All":
-    filtered = filtered[filtered["sector"] == sector_choice]
-
-filtered = filtered[filtered["momentum_score"] >= min_score]
-
-if filtered.empty:
-    st.warning("No startups match your filters.")
-    st.stop()
-
-# -----------------------
-# Top metrics
-# -----------------------
-c1, c2, c3 = st.columns(3)
-c1.metric("Startups shown", len(filtered))
-c2.metric("Highest score", f"{filtered['momentum_score'].max():.1f}")
-c3.metric("Average score", f"{filtered['momentum_score'].mean():.1f}")
-
-# -----------------------
-# Charts
-# -----------------------
-bubble = px.scatter(
-    filtered,
-    x="website_growth",
-    y="hiring_growth",
-    size="momentum_score",
-    color="sector",
-    hover_name="name",
-    text="name",
-    size_max=55,
-    title="Momentum Map: Website Growth vs Hiring Growth"
-)
-bubble.update_traces(textposition="top center")
-bubble.update_layout(height=550, legend_title_text="Sector")
-
-trend_filtered = trend_df[trend_df["Startup"].isin(filtered["name"])]
-
-line = px.line(
-    trend_filtered,
-    x="Month",
-    y="Score",
-    color="Startup",
-    markers=True,
-    category_orders={"Month": months},
-    title="Momentum Over Time"
-)
-line.update_layout(height=550)
-
-leaderboard = px.bar(
-    filtered.sort_values("momentum_score", ascending=True),
-    x="momentum_score",
-    y="name",
-    color="sector",
-    orientation="h",
-    title="Leaderboard"
-)
-leaderboard.update_layout(height=500, yaxis_title="")
-
-treemap = px.treemap(
-    filtered,
-    path=["sector", "name"],
-    values="momentum_score",
-    color="momentum_score",
-    title="Momentum by Sector"
-)
-treemap.update_layout(height=500)
-
-left, right = st.columns(2)
-with left:
-    st.plotly_chart(bubble, use_container_width=True)
-with right:
-    st.plotly_chart(line, use_container_width=True)
-
-left2, right2 = st.columns(2)
-with left2:
-    st.plotly_chart(leaderboard, use_container_width=True)
-with right2:
-    st.plotly_chart(treemap, use_container_width=True)
-
-st.subheader("Startup table")
-st.dataframe(
-    filtered.sort_values("momentum_score", ascending=False),
-    use_container_width=True
-)
-
 st.markdown("""
 <style>
-
-/* Background */
-.stApp {
-    background-color: #05070d;
-}
-
-/* Text */
+.stApp { background-color: #05070d; }
 html, body, [class*="css"] {
     font-family: 'Courier New', monospace;
     color: #00ff9f;
 }
-
-/* Headers */
 h1, h2, h3 {
     color: #00ff9f;
-    text-shadow: 0 0 10px #00ff9f;
+    text-shadow: 0 0 12px #00ff9f;
 }
-
-/* Cards / containers */
 [data-testid="stMetric"] {
     background-color: #0a0f1c;
     border: 1px solid #00ff9f;
-    padding: 15px;
     border-radius: 10px;
+    padding: 15px;
     box-shadow: 0 0 10px #00ff9f33;
 }
-
-/* Sidebar */
 section[data-testid="stSidebar"] {
     background-color: #04060a;
     border-right: 1px solid #00ff9f;
 }
-
-/* Table */
-[data-testid="stDataFrame"] {
-    border: 1px solid #00ff9f;
-}
-
-/* Glow effect */
-.glow {
-    text-shadow: 0 0 8px #00ff9f;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
-fig.update_layout(
+# -----------------------
+# HEADER
+# -----------------------
+st.markdown("""
+# 💻 AI BREAKOUT TERMINAL  
+### YC STARTUP SIGNAL INTERCEPTION SYSTEM  
+`STATUS: SCANNING FOR NEXT BILLION DOLLAR COMPANY...`
+---
+""")
+
+# -----------------------
+# DATA
+# -----------------------
+data = [
+    {"name": "Perplexity AI", "sector": "Search", "batch": "W22", "growth": 90, "execution": 85, "capital": 80},
+    {"name": "Scale AI", "sector": "Infra", "batch": "S16", "growth": 75, "execution": 95, "capital": 100},
+    {"name": "Runway ML", "sector": "GenAI", "batch": "S18", "growth": 95, "execution": 90, "capital": 85},
+    {"name": "Replit", "sector": "DevTools", "batch": "W18", "growth": 70, "execution": 75, "capital": 65},
+    {"name": "LangChain", "sector": "Infra", "batch": "S23", "growth": 100, "execution": 80, "capital": 60},
+    {"name": "Adept AI", "sector": "Agents", "batch": "Alumni", "growth": 85, "execution": 78, "capital": 90},
+    {"name": "Cognition", "sector": "Coding", "batch": "S23", "growth": 100, "execution": 95, "capital": 70},
+    {"name": "Pika Labs", "sector": "GenAI", "batch": "W24", "growth": 92, "execution": 82, "capital": 65},
+]
+
+df = pd.DataFrame(data)
+
+# -----------------------
+# SIMPLE + CLEAN SCORE
+# -----------------------
+df["momentum"] = (
+    df["growth"] * 0.4 +
+    df["execution"] * 0.4 +
+    df["capital"] * 0.2
+)
+
+# -----------------------
+# SIDEBAR
+# -----------------------
+st.sidebar.markdown("## ⚙️ FILTER SYSTEM")
+
+sector = st.sidebar.selectbox("Sector", ["All"] + list(df["sector"].unique()))
+
+filtered = df.copy()
+
+if sector != "All":
+    filtered = filtered[filtered["sector"] == sector]
+
+# -----------------------
+# METRICS (CLEAN)
+# -----------------------
+c1, c2, c3 = st.columns(3)
+
+c1.metric("📡 STARTUPS", len(filtered))
+c2.metric("⚡ TOP SIGNAL", int(filtered["momentum"].max()))
+c3.metric("🧠 AVG SIGNAL", int(filtered["momentum"].mean()))
+
+# -----------------------
+# COLOR SYSTEM
+# -----------------------
+colors = ["#00ff9f", "#00eaff", "#ff00ff", "#ffaa00"]
+
+# -----------------------
+# MAIN VISUAL (EASY TO READ)
+# -----------------------
+st.markdown("## 📊 SIGNAL MAP")
+
+bubble = px.scatter(
+    filtered,
+    x="growth",
+    y="execution",
+    size="momentum",
+    color="sector",
+    text="name",
+    color_discrete_sequence=colors
+)
+
+bubble.update_traces(
+    marker=dict(line=dict(width=1, color="#00ff9f"))
+)
+
+bubble.update_layout(
+    template="plotly_dark",
+    paper_bgcolor="#05070d",
+    plot_bgcolor="#05070d",
+    font=dict(color="#00ff9f"),
+    height=550,
+)
+
+st.plotly_chart(bubble, use_container_width=True)
+
+# -----------------------
+# HYPE VS REALITY
+# -----------------------
+st.markdown("## ⚠️ HYPE VS EXECUTION")
+
+hype = px.scatter(
+    filtered,
+    x="capital",
+    y="execution",
+    size="momentum",
+    text="name",
+    color="sector",
+    color_discrete_sequence=colors
+)
+
+hype.update_layout(
     template="plotly_dark",
     paper_bgcolor="#05070d",
     plot_bgcolor="#05070d",
     font=dict(color="#00ff9f"),
 )
+
+st.plotly_chart(hype, use_container_width=True)
+
+# -----------------------
+# LEADERBOARD (SUPER CLEAN)
+# -----------------------
+st.markdown("## 🏆 LEADERBOARD")
+
+leader = px.bar(
+    filtered.sort_values("momentum"),
+    x="momentum",
+    y="name",
+    orientation="h",
+    color="sector",
+    color_discrete_sequence=colors
+)
+
+leader.update_layout(
+    template="plotly_dark",
+    paper_bgcolor="#05070d",
+    plot_bgcolor="#05070d",
+    font=dict(color="#00ff9f"),
+)
+
+st.plotly_chart(leader, use_container_width=True)
+
+# -----------------------
+# INSIGHT ENGINE (🔥)
+# -----------------------
 st.markdown("## 🧠 SIGNAL ANALYSIS")
 
-top = filtered.sort_values("momentum_score", ascending=False).iloc[0]
-bottom = filtered.sort_values("momentum_score").iloc[0]
+top = filtered.sort_values("momentum", ascending=False).iloc[0]
+weak = filtered.sort_values("momentum").iloc[0]
 
 st.markdown(f"""
-> 🚀 TARGET LOCKED: **{top['name']}**  
-High signal across growth + execution vectors.
+🚀 **TARGET LOCKED:** {top['name']}  
+- High growth + execution  
+- Strong breakout potential  
 
-> ⚠️ WEAK NODE: **{bottom['name']}**  
-Low momentum detected. Potential dead zone.
+⚠️ **WEAK SIGNAL:** {weak['name']}  
+- Low momentum detected  
+- Monitor or avoid  
 
-> 🧬 SYSTEM NOTE:  
-Momentum spikes often precede funding events. Monitor closely.
+🧬 **SYSTEM NOTE:**  
+Momentum spikes often happen BEFORE funding rounds.
 """)
 
+# -----------------------
+# DATA TABLE (CLEAN)
+# -----------------------
+st.markdown("## 📡 DATABASE")
+
+st.dataframe(filtered.sort_values("momentum", ascending=False), use_container_width=True)
